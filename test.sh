@@ -3,6 +3,7 @@
 set -e
 
 OUTPUTDIR=${PWD}/output
+SMAP=${PWD}/testdata/smap.fits
 
 setup_outputdir() {
     test -d $OUTPUTDIR && rm -rf $OUTPUTDIR
@@ -22,7 +23,7 @@ test_create_bias() {
 
     python bin/pipebias.py $BIASLIST $MBIAS $OUTPUTDIR
 
-    FILENAME=$OUTPUTDIR/$MBIAS py.test -m bias testing
+    FILENAME=$OUTPUTDIR/$MBIAS py.test -m bias
 }
 
 test_create_dark() {
@@ -33,13 +34,27 @@ test_create_dark() {
 
     python bin/pipedark.py $DARKLIST $MBIAS $MDARK $OUTPUTDIR
 
-    FILENAME=$OUTPUTDIR/$MDARK py.test -m dark testing
+    FILENAME=$OUTPUTDIR/$MDARK py.test -m dark
+}
+
+test_create_flat() {
+    FLATLIST=$TMPDIR/flatlist.txt
+    find testdata/flat -name 'IMAGE*.bz2' > $FLATLIST
+
+    MFLAT=mflat.fits
+    SMAPNAME=smap.fits
+    cp $SMAP $OUTPUTDIR/$SMAPNAME
+
+    python bin/pipeflat.py $FLATLIST $MBIAS $MDARK $SMAPNAME $MFLAT $OUTPUTDIR
+
+    FILENAME=$OUTPUTDIR/$MFLAT py.test -m flat
 }
 
 main() {
     setup_environment
     test_create_bias
     test_create_dark
+    test_create_flat
 }
 
 main
