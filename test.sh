@@ -12,7 +12,6 @@ setup_outputdir() {
 
 setup_environment() {
     export PYTHONPATH=../zlp-script/scripts:$PYTHONPATH
-    setup_outputdir
 }
 
 test_create_bias() {
@@ -50,11 +49,21 @@ test_create_flat() {
     FILENAME=$OUTPUTDIR/$MFLAT py.test -m flat
 }
 
+test_reduce_files() {
+    SCIENCELIST=$TMPDIR/sciencelist.txt
+    find testdata/source -name 'IMAGE*.bz2' > $SCIENCELIST
+
+    python bin/pipered.py $SCIENCELIST $MBIAS $MDARK $SMAPNAME $MFLAT $OUTPUTDIR $OUTPUTDIR
+    py.test -m reduction
+}
+
 main() {
     setup_environment
+    setup_outputdir
     test_create_bias
     test_create_dark
     test_create_flat
+    test_reduce_files
 }
 
 main
