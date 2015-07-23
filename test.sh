@@ -57,6 +57,21 @@ test_reduce_files() {
     py.test -m reduction
 }
 
+test_flat_already_exists() {
+    FLATLIST=$TMPDIR/flatlist.txt
+    find testdata/flat -name 'IMAGE*.bz2' > $FLATLIST
+
+    MFLAT=mflat.fits
+    SMAPNAME=smap.fits
+    cp $SMAP $OUTPUTDIR/$SMAPNAME
+
+    # Ensure the file already exists
+    touch $OUTPUTDIR/$MFLAT
+    python bin/pipeflat.py $FLATLIST $MBIAS $MDARK $SMAPNAME $MFLAT $OUTPUTDIR
+
+    FILENAME=$OUTPUTDIR/$MFLAT py.test -m flat
+}
+
 main() {
     setup_environment
     setup_outputdir
@@ -64,6 +79,7 @@ main() {
     test_create_dark
     test_create_flat
     test_reduce_files
+    test_flat_already_exists
 }
 
 main
