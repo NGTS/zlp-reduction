@@ -11,10 +11,7 @@ from pipeutils import open_fits_file
 def render_total_file(data, fname, nfiles):
     hdu = pyfits.PrimaryHDU(data)
     hdu.header.set('nfiles', nfiles)
-    if os.path.exists(fname):
-      print('file %s already exists, removing file' % fname)
-      os.remove(fname)
-    hdu.writeto(fname)
+    hdu.writeto(fname, clobber=True)
 
 
 inlist = str(sys.argv[1])
@@ -98,7 +95,7 @@ def reducer():
             phdu.header['mjd'] = mjd
             command = 'rm -f '+outname
             os.system(command)
-            phdu.writeto(outname)
+            phdu.writeto(outname, clobber=True)
             tfile = outdir+'processed.dat'
             f = open(tfile, 'a')
             f.write(outname)
@@ -119,21 +116,18 @@ def reducer():
     print(np.size(wholestd))
     
     outname = outdir+'std.fits'
-    pyfits.PrimaryHDU(wholestd).writeto(outname)
+    pyfits.PrimaryHDU(wholestd).writeto(outname, clobber=True)
     print('std done')
     variance = 1/(wholestd*wholestd)
 
     outname = outdir+'variance.fits'
-    pyfits.PrimaryHDU(variance).writeto(outname)
+    pyfits.PrimaryHDU(variance).writeto(outname, clobber=True)
     print('var done')
     flat = np.median(datamatrix, axis = 0)
 
 
     outname = outdir+flatname
-    if os.path.exists(outname):
-      print('file %s already exists, removing file' % outname)
-      os.remove(outname)
-    pyfits.PrimaryHDU(flat).writeto(outname)
+    pyfits.PrimaryHDU(flat).writeto(outname, clobber=True)
     print('flat done')
 
     render_total_file(flat_total, totalname, nflat_files)
