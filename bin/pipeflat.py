@@ -11,6 +11,9 @@ from pipeutils import open_fits_file
 def render_total_file(data, fname, nfiles):
     hdu = pyfits.PrimaryHDU(data)
     hdu.header.set('nfiles', nfiles)
+    if os.path.exists(fname):
+      print('file %s already exists, removing file' % fname)
+      os.remove(fname)
     hdu.writeto(fname)
 
 
@@ -127,6 +130,9 @@ def reducer():
 
 
     outname = outdir+flatname
+    if os.path.exists(outname):
+      print('file %s already exists, removing file' % outname)
+      os.remove(outname)
     pyfits.PrimaryHDU(flat).writeto(outname)
     print('flat done')
 
