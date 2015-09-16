@@ -35,7 +35,7 @@ def reduce_file(filename, bias, dark, flat):
         hdulist[0].header.add_history('Overscan of '+str(np.median(overscan))+' subtracted')
         hdulist[0].header.add_history('Bias subtracted using '+str(biasname))
         hdulist[0].header.add_history('Dark subtracted using '+str(darkname))
-        hdulist[0].header.add_history('Flat corrected using '+str(flatname))
+        hdulist[0].header.add_history('No flat correction applied')
 
         command = 'rm -f '+outname
         os.system(command)
