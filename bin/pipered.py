@@ -26,7 +26,8 @@ def reduce_file(filename, bias, dark, flat):
         overscan = extract_overscan(hdulist)
         data = hdulist[0].data[0:2048,20:2068]
         exposure = hdulist[0].header['exposure']
-        corrected = (data-np.median(overscan)-bias-(dark*exposure))/flat
+        # Note no flat field correction
+        corrected = data - np.median(overscan) - bias - (dark * exposure)
         path, fname = os.path.split(filename)
         outname = outdir+'proc'+fname.replace('.bz2', '')
         print outname
