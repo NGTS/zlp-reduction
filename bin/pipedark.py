@@ -59,8 +59,10 @@ def darkmaker():
     print 'averaging'
     print np.shape(mastermatrix)
     dark = np.mean(mastermatrix, axis=0)
-    
-    phdu = pyfits.PrimaryHDU(dark)
+
+    # Create dummy dark master frame which is subtracted from all images
+    phdu = pyfits.PrimaryHDU(np.zeros_like(dark))
+    phdu.header.add_history('Dummy flat used for testing purposes')
 
     outname = outdir+darkname
     command = 'rm -f '+outname
